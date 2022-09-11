@@ -10,7 +10,7 @@
     "lint": "eslint ."
   },
   "dependencies": {
-    "@hkpuits/react-native-beacons-manager": "^1.2.7",
+    "@hookstate/core": "^4.0.0-rc21",
     "@react-navigation/native": "^6.0.10",
     "@react-navigation/native-stack": "^6.6.2",
     "react": "18.0.0",

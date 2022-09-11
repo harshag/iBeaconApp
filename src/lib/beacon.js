@@ -5,9 +5,8 @@ import {
     Platform,
     PermissionsAndroid,
 } from 'react-native';
-import Kontakt, {KontaktModule} from 'react-native-kontaktio';
+import Kontakt from 'react-native-kontaktio';
 
-const kontaktEmitter = new NativeEventEmitter(KontaktModule);
 const isAndroid = Platform.OS === 'android';
 
 const requestLocationPermission = async () => {
@@ -17,7 +16,7 @@ const requestLocationPermission = async () => {
       {
         title: 'Location Permission',
         message:
-          'This example app needs to access your location in order to use bluetooth beacons.',
+          'This app needs to access your location in order to use bluetooth beacons.',
         buttonNeutral: 'Ask Me Later',
         buttonNegative: 'Cancel',
         buttonPositive: 'OK',
@@ -26,7 +25,6 @@ const requestLocationPermission = async () => {
     if (granted === PermissionsAndroid.RESULTS.GRANTED) {
       return true;
     } else {
-      // permission denied
       return false;
     }
   } catch (err) {
@@ -83,32 +81,5 @@ export const beaconSetup = async () => {
     await Kontakt.configure(scanOptions)
     Kontakt.setBeaconRegion(region)
     await Kontakt.startDiscovery();
-  }
-
-  // Add beacon listener
-  if (isAndroid) {
-    DeviceEventEmitter.addListener('beaconsDidUpdate', ({beacons, region}) => {
-      console.log('beaconsDidUpdate', beacons, region);
-    });
-    DeviceEventEmitter.addListener('beaconDidAppear', ({beacons, region}) => {
-      console.log('beaconDidAppear', beacons, region);
-    });
-    DeviceEventEmitter.addListener('beaconDidDisappear', ({beacons, region}) => {
-      console.log('beaconDidDisappear', beacons, region);
-    });
-
-    // Region specific events
-    DeviceEventEmitter.addListener('regionDidEnter', ({region}) => {
-      console.log('Region Entered: ', region);
-    });
-
-    DeviceEventEmitter.addListener('regionDidExit', ({region}) => {
-      console.log('Region Exited: ', region);
-    });
-  } else {
-    // iOS
-    kontaktEmitter.addListener('didDiscoverDevices', ({beacons}) => {
-      console.log('didDiscoverDevices', beacons);
-    });
   }
 };
