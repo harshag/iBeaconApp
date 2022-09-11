@@ -3,7 +3,8 @@ import { createState } from '@hookstate/core';
 const store = createState({
     beaconList: [],
     region: {},
-    bannerVisible: true
+    bannerVisible: true,
+    timeSinceLastDetection: 0,
 })
 
 export default store;

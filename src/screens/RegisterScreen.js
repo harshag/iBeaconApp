@@ -33,7 +33,7 @@ function RegisterScreen({navigation}) {
   useEffect(() => {
     distance = beacon.accuracy ? `${Number(parseFloat(beacon.accuracy)).toPrecision(4)} M` : 'N/A';
     nav.setOptions({
-      headerRight: () => <Text style={{color: '#000', fontWeight: 'bold'}}>Beacon Distance: { distance }</Text>,
+      headerRight: () => <Text style={{color: '#000', fontWeight: 'bold'}}>Beacon Distance (approx): { distance }</Text>,
     });
   }, [beacon]);
 

@@ -29,22 +29,21 @@ export default function App() {
   const checkBeacon = () => {
     const appBeacon = globalState.beaconList.get()?.filter(beacon => beacon.uuid === '1730be8a-809e-4379-b6c0-eae674da0d70');
     console.log('AppBeacon: ', appBeacon);
-    if (appBeacon.length > 0 && appBeacon[0]?.proximity !== 'FAR') {
+    if (appBeacon.length > 0 && appBeacon[0]?.proximity !== 'FAR' && globalState.get().timeSinceLastDetection < 5) {
       globalState.merge({bannerVisible: false});
     } else {
       globalState.merge({bannerVisible: true});
     }
   }
-  
 
   useEffect(() => {
     beaconSetup();
-
+    beaconTimer;
       // Add beacon listener
     if (isAndroid) {
       DeviceEventEmitter.addListener('beaconsDidUpdate', ({beacons, region}) => {
         console.log('beaconsDidUpdate', beacons, region);
-        globalState.merge({beaconList: beacons, region: region})
+        globalState.merge({beaconList: beacons, region: region, timeSinceLastDetection: 0})
         checkBeacon();
       });
 
@@ -60,7 +59,17 @@ export default function App() {
       });
     }
 
-    return () => removeBeaconListeners()
+    const beaconTimer = setInterval(() => {
+      let incrementTime = globalState.get().timeSinceLastDetection + 1;
+      globalState.merge({timeSinceLastDetection: incrementTime});
+      checkBeacon();
+      console.log('Time since last detection: ', globalState.get().timeSinceLastDetection);
+    }, 1000);
+
+    return () => {
+      removeBeaconListeners();
+      clearInterval(beaconTimer);
+    }
   }, []);
   
   return (
@@ -68,7 +77,7 @@ export default function App() {
       <Stack.Navigator initialRouteName="Home">
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="Login" component={LoginScreen} />
-        <Stack.Screen name="Register" component={RegisterScreen} options={{title: "Registration"}} />
+        <Stack.Screen name="Register" component={RegisterScreen} options={{title: "Register"}} />
         <Stack.Screen name="Success" component={SuccessScreen} />
       </Stack.Navigator>
     </NavigationContainer>
